@@ -87,10 +87,9 @@ class _HomeTabListViewState extends State<HomeTabListView>
     if (newsList.length != 0) {
       return EasyRefresh(
           key: _easyRefreshKey,
-          refreshHeader: BezierCircleHeader(
+          refreshHeader: ClassicsHeader(
             key: _headerKey,
-            backgroundColor: Color(materialColor['black']),
-            /*refreshText: "下拉刷新",
+            refreshText: "下拉刷新",
             refreshReadyText: "放开刷新",
             refreshingText: "正在刷新",
             refreshedText: "刷新成功",
@@ -99,7 +98,7 @@ class _HomeTabListViewState extends State<HomeTabListView>
             textColor: Colors.black87,
             moreInfoColor: Colors.black54,
             showMore: false,
-            refreshHeight: 50.0,*/
+            refreshHeight: 50.0,
           ),
           refreshFooter: ClassicsFooter(
             key: _footerKey,
