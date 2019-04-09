@@ -11,27 +11,21 @@ class _HomeState extends State<Home>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   TabController _tabController;
   List<String> _mapList = [
-    '头条',
-    '社会',
-    '国内',
     '娱乐',
-    '体育',
-    '军事',
-    '科技',
-    '财经',
-    '时尚',
+    '搞笑',
+    '科普',
+    '健康',
+    '情感',
+    '美食',
+    '文玩',
+    '健身',
+    '电影',
+    '汽车',
+    '育儿',
+    '星座',
+    '萌宠',
   ];
-  List<String> _keyList = [
-    'top',
-    'shehui',
-    'guonei',
-    'yule',
-    'tiyu',
-    'junshi',
-    'keji',
-    'caijing',
-    'shishang',
-  ];
+
   int _currentIndex = -1;
 
   @override
@@ -112,7 +106,7 @@ class _HomeState extends State<Home>
       child: new TabBarView(
           controller: _tabController,
           children: List.generate(_mapList.length, (index) {
-            return new HomeTabListView(_mapList[index],_keyList[index]);
+            return new HomeTabListView(_mapList[index],_mapList[index]);
           })),
     );
   }

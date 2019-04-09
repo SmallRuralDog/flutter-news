@@ -39,7 +39,7 @@ class OneImage extends StatelessWidget {
                       child: Row(
                         children: <Widget>[
                           Text(
-                            item['author_name'],
+                            item['source'],
                             style: TextStyle(
                                 fontSize: Style.infoSize, color: Colors.grey),
                           ),
@@ -71,7 +71,7 @@ class OneImage extends StatelessWidget {
               color: Colors.grey[100],
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
-                image: item['thumbnail_pic_s'],
+                image: item['images'][0]['name'],
                 height: Style.imagesH,
                 fit: BoxFit.cover,
               ),

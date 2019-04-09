@@ -36,7 +36,7 @@ class ThreeImage extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: FadeInImage.memoryNetwork(
                         placeholder: kTransparentImage,
-                        image: item['thumbnail_pic_s'],
+                        image: item['images'][0]['name'],
                         height: Style.imagesH,
                         fit: BoxFit.cover,
                       ),
@@ -51,7 +51,7 @@ class ThreeImage extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: FadeInImage.memoryNetwork(
                         placeholder: kTransparentImage,
-                        image: item['thumbnail_pic_s02'],
+                        image: item['images'][1]['name'],
                         height: Style.imagesH,
                         fit: BoxFit.cover,
                       ),
@@ -66,7 +66,7 @@ class ThreeImage extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: FadeInImage.memoryNetwork(
                         placeholder: kTransparentImage,
-                        image: item['thumbnail_pic_s03'],
+                        image: item['images'][2]['name'],
                         height: Style.imagesH,
                         fit: BoxFit.cover,
                       ),
@@ -80,7 +80,7 @@ class ThreeImage extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   Text(
-                    item['author_name'],
+                    item['source'],
                     style:
                     TextStyle(fontSize: Style.infoSize, color: Colors.grey),
                   ),
