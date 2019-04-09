@@ -91,7 +91,7 @@ class _HomeState extends State<Home>
       ),
       labelPadding: EdgeInsets.all(12),
       indicatorPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      indicatorWeight: 0.01,
+      //indicatorWeight: 5,
       indicatorSize: TabBarIndicatorSize.label,
       tabs: _mapList.map((v) {
         return new Tab(

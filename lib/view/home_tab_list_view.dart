@@ -2,13 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/bezier_bounce_footer.dart';
-import 'package:flutter_easyrefresh/bezier_circle_header.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/components/one_image.dart';
 import 'package:my_app/components/three_image.dart';
-import 'package:my_app/config/color.dart' show materialColor;
+import "package:pull_to_refresh/pull_to_refresh.dart";
 
 // ignore: must_be_immutable
 class HomeTabListView extends StatefulWidget {
@@ -25,48 +23,52 @@ class _HomeTabListViewState extends State<HomeTabListView>
     with AutomaticKeepAliveClientMixin {
   List newsList = [];
 
-  GlobalKey<EasyRefreshState> _easyRefreshKey =
-      new GlobalKey<EasyRefreshState>();
-  GlobalKey<RefreshHeaderState> _headerKey =
-      new GlobalKey<RefreshHeaderState>();
-  GlobalKey<RefreshFooterState> _footerKey = new GlobalKey<RefreshFooterState>();
+  RefreshController _refreshController;
 
   @override
   void initState() {
+    _refreshController = new RefreshController();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _refreshController.requestRefresh(true);
+    });
     super.initState();
     loadData("up");
   }
 
-  loadData(String mode) async {
+  loadData(String mode) {
     String loadRUL =
         "https://feed.shida.sogou.com/discover_agent/getlist?newh5=1&cmd=getnewslist&b=${widget.channel}&h=mini_6557322&mode=${mode}";
 
-    http.Response response = await http.get(loadRUL);
-    var result = json.decode(response.body);
-
-    List urlInfos = result['url_infos'];
-
-    List selfList = newsList;
-
-    if (mode == "down") {
-      selfList.addAll(urlInfos);
+    http.get(loadRUL).then((response) {
+      var result = json.decode(response.body);
+      List urlInfos = result['url_infos'];
+      List selfList = newsList;
+      if (mode == "down") {
+        selfList.addAll(urlInfos);
+        setState(() {
+          newsList = selfList;
+          _refreshController.sendBack(false, RefreshStatus.idle);
+        });
+      } else {
+        urlInfos.addAll(selfList);
+        setState(() {
+          newsList = urlInfos;
+          _refreshController.sendBack(true, RefreshStatus.completed);
+        });
+      }
+    }).catchError((err) {
       setState(() {
-        newsList = selfList;
+        _refreshController.sendBack(false, RefreshStatus.failed);
       });
+    });
+  }
+
+  _onRefresh(bool up) {
+    if (up) {
+      loadData("up");
     } else {
-      urlInfos.addAll(selfList);
-      setState(() {
-        newsList = urlInfos;
-      });
+      loadData("down");
     }
-  }
-
-  Future<Null> _onRefresh() async {
-    await loadData("up");
-  }
-
-  Future<Null> _loadMore() async {
-    await loadData("down");
   }
 
   @override
@@ -83,40 +85,36 @@ class _HomeTabListViewState extends State<HomeTabListView>
     );
   }
 
+  Widget _headerCreate(BuildContext context, RefreshStatus mode) {
+    return new ClassicIndicator(
+      mode: mode,
+      releaseText: '松开刷新',
+      refreshingText: '正在加载',
+      completeText: '刷新成功',
+      //idleIcon: const Icon(Icons.arrow_downward),
+      idleText: '下拉刷新',
+    );
+  }
+
+  Widget _footerCreate(BuildContext context, RefreshStatus mode) {
+    return new ClassicIndicator(
+      mode: mode,
+      refreshingText: '正在加载',
+      idleText: '加载更多',
+    );
+  }
+
   getBody() {
     if (newsList.length != 0) {
-      return EasyRefresh(
-          key: _easyRefreshKey,
-          refreshHeader: ClassicsHeader(
-            key: _headerKey,
-            refreshText: "下拉刷新",
-            refreshReadyText: "放开刷新",
-            refreshingText: "正在刷新",
-            refreshedText: "刷新成功",
-            //moreInfo: "updateAt",
-            bgColor: Colors.grey[100],
-            textColor: Colors.black87,
-            moreInfoColor: Colors.black54,
-            showMore: false,
-            refreshHeight: 50.0,
-          ),
-          refreshFooter: ClassicsFooter(
-            key: _footerKey,
-            loadText: "上拉加载",
-            loadReadyText: "松开加载",
-            loadingText: "正在加载",
-            loadedText: "加载完成",
-            noMoreText: "没有更多了",
-            moreInfo: "updateAt",
-            bgColor: Colors.transparent,
-            textColor: Colors.grey,
-            moreInfoColor: Colors.grey,
-            showMore: false,
-            loadHeight: 50.0,
-          ),
+      return SmartRefresher(
+          controller: _refreshController,
+          enablePullDown: true,
+          enablePullUp: true,
           onRefresh: _onRefresh,
-          loadMore: _loadMore,
-          autoLoad: true,
+          headerConfig: RefreshConfig(triggerDistance: 50),
+          footerConfig: LoadConfig(autoLoad: true, triggerDistance: 100),
+          headerBuilder: _headerCreate,
+          footerBuilder: _footerCreate,
           child: ListView.separated(
             separatorBuilder: (BuildContext context, int index) => Divider(
                   height: 1,
