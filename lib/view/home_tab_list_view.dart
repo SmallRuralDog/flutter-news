@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/components/one_image.dart';
 import 'package:my_app/components/three_image.dart';
@@ -142,8 +141,7 @@ class _HomeTabListViewState extends State<HomeTabListView>
                     onTap: () {
                       Navigator.push(
                           context,
-                          new MaterialPageRoute(builder: (context)=>new NewsDetail(title: item['title'],)
-                          ));
+                          new MaterialPageRoute(builder: (context)=>new NewsDetail(title: item['title'],)));
                     },
                     child: new ThreeImage(item),
                   );
