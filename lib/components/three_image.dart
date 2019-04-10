@@ -11,7 +11,6 @@ class ThreeImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.white,
         padding: EdgeInsets.fromLTRB(0,0,0,10),
         child: Column(
           children: <Widget>[

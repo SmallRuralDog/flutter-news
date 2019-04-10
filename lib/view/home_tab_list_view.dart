@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/components/one_image.dart';
 import 'package:my_app/components/three_image.dart';
+import 'package:my_app/page/news_detail.dart';
 import "package:pull_to_refresh/pull_to_refresh.dart";
 
 // ignore: must_be_immutable
@@ -43,7 +44,6 @@ class _HomeTabListViewState extends State<HomeTabListView>
     String loadRUL =
         "https://feed.shida.sogou.com/discover_agent/getlist?newh5=1&cmd=getnewslist&b=${widget.channel}&h=mini_6557322&mode=${mode}";
 
-    print(loadRUL);
 
     var response = await http.get(loadRUL);
     var result = json.decode(response.body);
@@ -102,6 +102,8 @@ class _HomeTabListViewState extends State<HomeTabListView>
       completeText: '刷新成功',
       //idleIcon: const Icon(Icons.arrow_downward),
       idleText: '下拉刷新',
+      iconPos: IconPosition.left,
+      refreshingIcon: CupertinoActivityIndicator(),
     );
   }
 
@@ -110,6 +112,7 @@ class _HomeTabListViewState extends State<HomeTabListView>
       mode: mode,
       refreshingText: '正在加载',
       idleText: '加载更多',
+      refreshingIcon: CupertinoActivityIndicator(),
     );
   }
 
@@ -135,14 +138,17 @@ class _HomeTabListViewState extends State<HomeTabListView>
               List images = item['images'];
               try {
                 if (images.length >= 3) {
-                  return new GestureDetector(
+                  return  InkWell(
                     onTap: () {
-                      print(item);
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(builder: (context)=>new NewsDetail(title: item['title'],)
+                          ));
                     },
                     child: new ThreeImage(item),
                   );
                 } else if (images.length == 1) {
-                  return new GestureDetector(
+                  return new InkWell(
                     onTap: () {
                       print(item);
                     },

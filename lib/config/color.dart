@@ -23,4 +23,5 @@ Map materialColor = {
   'grey': 0xFF9E9E9E,
   'blueGrey': 0xFF607D8B,
   'black': 0xFF222222,
+  'white': 0xFFFFFFFF,
 };
