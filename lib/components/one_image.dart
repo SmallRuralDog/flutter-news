@@ -70,6 +70,7 @@ class OneImage extends StatelessWidget {
             child: Container(
               color: Colors.grey[100],
               child: FadeInImage.memoryNetwork(
+                key: ValueKey(item['images'][0]['name']),
                 placeholder: kTransparentImage,
                 image: item['images'][0]['name'],
                 height: Style.imagesH,

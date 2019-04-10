@@ -35,6 +35,7 @@ class ThreeImage extends StatelessWidget {
                       color: Colors.grey[100],
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: FadeInImage.memoryNetwork(
+                        key: ValueKey(item['images'][0]['name']),
                         placeholder: kTransparentImage,
                         image: item['images'][0]['name'],
                         height: Style.imagesH,
@@ -50,6 +51,7 @@ class ThreeImage extends StatelessWidget {
                       color: Colors.grey[100],
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: FadeInImage.memoryNetwork(
+                        key: ValueKey(item['images'][1]['name']),
                         placeholder: kTransparentImage,
                         image: item['images'][1]['name'],
                         height: Style.imagesH,
@@ -65,6 +67,7 @@ class ThreeImage extends StatelessWidget {
                       color: Colors.grey[100],
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: FadeInImage.memoryNetwork(
+                        key: ValueKey(item['images'][2]['name']),
                         placeholder: kTransparentImage,
                         image: item['images'][2]['name'],
                         height: Style.imagesH,

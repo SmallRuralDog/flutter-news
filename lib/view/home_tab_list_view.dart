@@ -25,49 +25,58 @@ class _HomeTabListViewState extends State<HomeTabListView>
 
   RefreshController _refreshController;
 
+  bool isLoad;
+
   @override
   void initState() {
     _refreshController = new RefreshController();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _refreshController.requestRefresh(true);
-    });
+    isLoad = false;
     super.initState();
     loadData("up");
   }
 
-  loadData(String mode) {
+  loadData(String mode) async {
+    setState(() {
+      isLoad = true;
+    });
+
     String loadRUL =
         "https://feed.shida.sogou.com/discover_agent/getlist?newh5=1&cmd=getnewslist&b=${widget.channel}&h=mini_6557322&mode=${mode}";
 
-    http.get(loadRUL).then((response) {
-      var result = json.decode(response.body);
-      List urlInfos = result['url_infos'];
-      List selfList = newsList;
-      if (mode == "down") {
-        selfList.addAll(urlInfos);
-        setState(() {
-          newsList = selfList;
-          _refreshController.sendBack(false, RefreshStatus.idle);
-        });
-      } else {
-        urlInfos.addAll(selfList);
-        setState(() {
-          newsList = urlInfos;
-          _refreshController.sendBack(true, RefreshStatus.completed);
-        });
-      }
-    }).catchError((err) {
+    print(loadRUL);
+
+    var response = await http.get(loadRUL);
+    var result = json.decode(response.body);
+    List urlInfos = result['url_infos'];
+    List selfList = newsList;
+    if (mode == "down") {
+      selfList.addAll(urlInfos);
       setState(() {
-        _refreshController.sendBack(false, RefreshStatus.failed);
+        newsList = selfList;
+        isLoad = false;
       });
-    });
+    } else {
+      urlInfos.addAll(selfList);
+      setState(() {
+        newsList = urlInfos;
+        isLoad = false;
+      });
+    }
   }
 
-  _onRefresh(bool up) {
-    if (up) {
-      loadData("up");
-    } else {
-      loadData("down");
+  _onRefresh(bool up) async {
+    if (!isLoad) {
+      if (up) {
+        await loadData("up");
+        setState(() {
+          _refreshController.sendBack(true, RefreshStatus.completed);
+        });
+      } else {
+        await loadData("down");
+        setState(() {
+          _refreshController.sendBack(false, RefreshStatus.idle);
+        });
+      }
     }
   }
 
@@ -112,7 +121,6 @@ class _HomeTabListViewState extends State<HomeTabListView>
           enablePullUp: true,
           onRefresh: _onRefresh,
           headerConfig: RefreshConfig(triggerDistance: 50),
-          footerConfig: LoadConfig(autoLoad: true, triggerDistance: 100),
           headerBuilder: _headerCreate,
           footerBuilder: _footerCreate,
           child: ListView.separated(
@@ -125,20 +133,24 @@ class _HomeTabListViewState extends State<HomeTabListView>
             itemBuilder: (context, index) {
               var item = newsList[index];
               List images = item['images'];
-              if (images.length >= 3) {
-                return new GestureDetector(
-                  onTap: () {
-                    print(item);
-                  },
-                  child: new ThreeImage(item),
-                );
-              } else if (images.length == 1) {
-                return new GestureDetector(
-                  onTap: () {
-                    print(item);
-                  },
-                  child: new OneImage(item),
-                );
+              try {
+                if (images.length >= 3) {
+                  return new GestureDetector(
+                    onTap: () {
+                      print(item);
+                    },
+                    child: new ThreeImage(item),
+                  );
+                } else if (images.length == 1) {
+                  return new GestureDetector(
+                    onTap: () {
+                      print(item);
+                    },
+                    child: new OneImage(item),
+                  );
+                }
+              } catch (e) {
+                print(item['images']);
               }
             },
           ));
